@@ -22,7 +22,16 @@ import com.ragialquery.data.RagialData.VendingNow;
  */
 public class RagialQueryMatcher {
 	private static ExecutorService executer = Executors.newCachedThreadPool();
-	private static final String RAGIAL_SEARCH_URL = "http://ragial.com/search/iRO-Renewal/";
+	private static String RAGIAL_SEARCH_URL = "http://ragial.com/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragial.com/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragial.com/search/iRO-Classic/";
+	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragial.com/search/iRO-Thor/";
+	
+	public static final int RAGIAL_URL_RENEWAL = 1;
+	public static final int RAGIAL_URL_CLASSIC = 2;
+	public static final int RAGIAL_URL_THOR = 3;
+	private static int searchChoiceCode = 1;
+	
 	private static RagialQueryMatcher matcher = new RagialQueryMatcher();
 
 	private RagialQueryMatcher() {}
@@ -38,6 +47,39 @@ public class RagialQueryMatcher {
 			matcher = new RagialQueryMatcher();
 			return matcher;
 		}
+	}
+
+	/**
+	 * Sets the URL which Ragial will search.
+	 * @param urlCode - An integer code representing the 3 different Ragial search types possible
+	 */
+	public final void setSearchURL(int urlCode) {
+		searchChoiceCode = urlCode;
+		switch(urlCode) {
+		case RAGIAL_URL_RENEWAL: {
+			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_RENEWAL_URL;
+			break;
+		}
+		case RAGIAL_URL_CLASSIC: {
+			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_CLASSIC_URL;
+			break;
+		}
+		case RAGIAL_URL_THOR: {
+			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_THOR_URL;
+			break;
+		}
+		default: {
+			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_RENEWAL_URL;
+		}
+		}
+	}
+	
+	/**
+	 * Returns the searchCode (1, 2, 3) depending on set choice
+	 * @return returns the searchCode corresponding to RAGIAL_URL_*
+	 */
+	public static synchronized int getSearchChoiceCode() {
+		return searchChoiceCode;
 	}
 
 	/**
