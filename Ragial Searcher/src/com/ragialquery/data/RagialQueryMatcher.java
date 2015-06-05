@@ -26,12 +26,12 @@ public class RagialQueryMatcher {
 	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragial.com/search/iRO-Renewal/";
 	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragial.com/search/iRO-Classic/";
 	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragial.com/search/iRO-Thor/";
-	
+
 	public static final int RAGIAL_URL_RENEWAL = 1;
 	public static final int RAGIAL_URL_CLASSIC = 2;
 	public static final int RAGIAL_URL_THOR = 3;
 	private static int searchChoiceCode = 1;
-	
+
 	private static RagialQueryMatcher matcher = new RagialQueryMatcher();
 
 	private RagialQueryMatcher() {}
@@ -53,7 +53,7 @@ public class RagialQueryMatcher {
 	 * Sets the URL which Ragial will search.
 	 * @param urlCode - An integer code representing the 3 different Ragial search types possible
 	 */
-	public final void setSearchURL(int urlCode) {
+	public static final void setSearchURL(int urlCode) {
 		searchChoiceCode = urlCode;
 		switch(urlCode) {
 		case RAGIAL_URL_RENEWAL: {
@@ -73,7 +73,7 @@ public class RagialQueryMatcher {
 		}
 		}
 	}
-	
+
 	/**
 	 * Returns the searchCode (1, 2, 3) depending on set choice
 	 * @return returns the searchCode corresponding to RAGIAL_URL_*
@@ -304,15 +304,29 @@ public class RagialQueryMatcher {
 					if(name.equals(data.name)) {
 						if(!checkOverLongTermAsWell) {
 							for(VendingNow test : dataList) {
-								if(test.vendPrice <= data.shortAverage) {
-									list.add(test);
+								if(test.isTypeBuying == 0) {
+									if(test.vendPrice <= data.shortAverage) {
+										list.add(test);
+									}
+								}
+								else {
+									if(test.vendPrice >= data.shortAverage) {
+										list.add(test);
+									}
 								}
 							}
 						}
 						else {
 							for(VendingNow test : dataList) {
-								if((data.shortAverage <= test.vendPrice && test.vendPrice <= data.longAverage) || (test.vendPrice <= data.shortAverage)) {
-									list.add(test);
+								if(test.isTypeBuying == 0) {
+									if((data.shortAverage <= test.vendPrice && test.vendPrice <= data.longAverage) || (test.vendPrice <= data.shortAverage)) {
+										list.add(test);
+									}
+								}
+								else {
+									if((data.shortAverage >= test.vendPrice && test.vendPrice >= data.longAverage) || (test.vendPrice >= data.shortAverage)) {
+										list.add(test);
+									}
 								}
 							}
 						}

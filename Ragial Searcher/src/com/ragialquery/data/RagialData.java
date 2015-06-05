@@ -59,6 +59,7 @@ public class RagialData {
 		public int vendCount;
 		public long vendPrice;
 		public int stdCh;
+		public int isTypeBuying;
 		
 		@Override
 		public String toString() {
@@ -68,10 +69,13 @@ public class RagialData {
 			sb.append("Vend Count : " + vendCount + "\n");
 			sb.append("Vend Price : " + vendPrice + "\n");
 			sb.append("Standard Change : " + stdCh + "\n");
+			sb.append("Is Buying : " + isTypeBuying + "\n");
 			return sb.toString();
 		}
 		
 	}
+	
+	
 	
 	private String parseRagialUrlCode() {
 		int code = RagialQueryMatcher.getSearchChoiceCode();
@@ -206,12 +210,59 @@ public class RagialData {
 						}
 						vdn.stdCh = Integer.parseInt(s);
 						
+						vdn.isTypeBuying = 0;
+						
 						vendingList.add(vdn);
 						
 						break;
 					}
 				}
+			}
+			else if(e.text().equals("Buying Now")) {
+				url = e.attr("href");
+				vend = Jsoup.connect(url).timeout(0).get();		
 				
+				VendingNow vdn = new VendingNow();
+				String venderName = vend.select("dt").get(1).text();
+				vdn.venderName = venderName;
+				
+				String shopName = vend.select("h2").first().text();
+				vdn.shopName = shopName;
+				
+				Elements items = vend.select("tr");
+				for(Element item : items) {
+					
+					String testName = item.getElementsByClass("name").text();
+					
+					if(testName.trim().equals(name)) {
+						Elements testAmount = item.select("td");
+						
+						String co = testAmount.get(1).text();
+						co = co.substring(0, co.length() - 1);
+						co = co.replace(",", "");
+						vdn.vendCount = Integer.parseInt(co);
+						
+						Element pre = testAmount.get(2);
+						String pr = pre.getElementsByAttribute("href").first().text();
+						pr = pr.substring(0, pr.length() - 1);
+						pr = pr.replaceAll(",", "");
+						vdn.vendPrice = Long.parseLong(pr);
+						
+						Element st = testAmount.get(3);
+						String s = st.text();
+						s = s.substring(0, s.length()-1);
+						if(s.contains("+")) {
+							s = s.replace("+", "");
+						}
+						vdn.stdCh = Integer.parseInt(s);
+						
+						vdn.isTypeBuying = 1;
+						
+						vendingList.add(vdn);
+						
+						break;
+					}
+				}
 			}
 		}
 		
@@ -249,8 +300,8 @@ public class RagialData {
 			sb.append("Shop name : " + vd.shopName + "\n");
 			sb.append("Count : " + vd.vendCount + "\n");
 			sb.append("Vend price : " + vd.vendPrice + "\n");
-			sb.append("Standard Difference : " + vd.stdCh + "%\n\n");
-			
+			sb.append("Standard Difference : " + vd.stdCh + "%\n");
+			sb.append("Is Buying : " + vd.isTypeBuying + "\n\n");
 		}
 
 		return sb.toString();
@@ -270,7 +321,8 @@ public class RagialData {
 				sb.append("Shop name : " + vd.shopName + "\n");
 				sb.append("Count : " + vd.vendCount + "\n");
 				sb.append("Vend price : " + vd.vendPrice + "\n");
-				sb.append("Standard Difference : " + vd.stdCh + "%\n\n");
+				sb.append("Standard Difference : " + vd.stdCh + "%\n");
+				sb.append("Is Buying : " + vd.isTypeBuying + "\n\n");
 			}
 		}
 		else {
