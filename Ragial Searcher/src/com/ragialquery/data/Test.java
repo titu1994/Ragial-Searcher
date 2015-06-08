@@ -26,8 +26,14 @@ public class Test {
 		BufferedReader bb = new BufferedReader(new InputStreamReader(System.in));
 		String name = bb.readLine();
 		
+		long a = System.currentTimeMillis();
 		RagialData[] datas = matcher.searchRagial(name).get();
+		long b = System.currentTimeMillis();
 		RagialData specificData = RagialQueryMatcher.searchRagialSpecificly(name, datas);
+		long c = System.currentTimeMillis();
+		
+		System.out.println("Time to parse ragial.com : " + ((b-a)));
+		System.out.println("Time to search specific : " + ((c-b)));
 	
 		System.out.println(specificData + "\n");
 		
