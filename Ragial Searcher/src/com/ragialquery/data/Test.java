@@ -32,8 +32,8 @@ public class Test {
 		RagialData specificData = RagialQueryMatcher.searchRagialSpecificly(name, datas);
 		long c = System.currentTimeMillis();
 		
-		System.out.println("Time to parse ragial.com : " + ((b-a)));
-		System.out.println("Time to search specific : " + ((c-b)));
+		//System.out.println("Time to parse ragial.com : " + ((b-a)));
+		//System.out.println("Time to search specific : " + ((c-b)));
 	
 		System.out.println(specificData + "\n");
 		

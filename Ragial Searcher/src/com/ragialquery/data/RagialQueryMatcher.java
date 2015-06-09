@@ -125,7 +125,7 @@ public class RagialQueryMatcher {
 					urlBuilder.append(exactName.charAt(pos));
 					urlBuilder.append("%5D");
 				}
-
+				
 				Document doc = Jsoup.connect(RAGIAL_SEARCH_URL + urlBuilder.toString())
 						.timeout(0)
 						.get();
@@ -142,7 +142,7 @@ public class RagialQueryMatcher {
 
 					list.add(store);
 				}
-
+				
 				return list.toArray(new RagialData[list.size()]);
 			}
 		};
@@ -156,14 +156,27 @@ public class RagialQueryMatcher {
 	 * @param exactName - The exact name, word for word, character for character of the item to be searched
 	 * @return RagialData - Forces only one correct result to be returned from the array. If data is not found, returns null
 	 */
-	public RagialData searchRagialSpecificly(final String exactName) {
+	public RagialData searchRagialSpecificly(String exactName) {
 		RagialData[] datas = null;
 		try {
 			datas = searchRagial(exactName).get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-
+		
+		StringBuffer buff = new StringBuffer(exactName);
+		if(exactName.contains("-slotted")) {
+			int x = buff.indexOf("-slotted");
+			exactName = buff.substring(0, x).trim();
+		}
+		
+		/*
+		 * Patch for Fallen Angel Wing bug in Ragial.com
+		 */
+		if(exactName.equalsIgnoreCase("Fallen Angel Wing")) {
+			exactName = exactName + " [1]";
+		}
+		
 		for(RagialData data : datas) {
 			if(data.name.equalsIgnoreCase(exactName)) {
 				return data;
@@ -179,6 +192,19 @@ public class RagialQueryMatcher {
 	 * @return RagialData - forces only one correct result to be returned from the array. If data is not found, returns null.
 	 */
 	public static RagialData searchRagialSpecificly(String exactName, RagialData[] datas) {
+		StringBuffer buff = new StringBuffer(exactName);
+		if(exactName.contains("-slotted")) {
+			int x = buff.indexOf("-slotted");
+			exactName = buff.substring(0, x).trim();
+		}
+		
+		/*
+		 * Patch for Fallen Angel Wing bug in Ragial.com
+		 */
+		if(exactName.equalsIgnoreCase("Fallen Angel Wing")) {
+			exactName = exactName + " [1]";
+		}
+		
 		for(RagialData data : datas) {
 			if(data.name.equalsIgnoreCase(exactName)) {
 				return data;
@@ -299,6 +325,9 @@ public class RagialQueryMatcher {
 				ArrayList<VendingNow> dataList = null;
 
 				for(RagialData data : datas) {
+					if(data == null)
+						continue;
+					
 					dataList = data.vendingList;
 
 					if(name.equals(data.name)) {
