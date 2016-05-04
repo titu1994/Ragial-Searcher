@@ -1,18 +1,13 @@
 package com.ragialquery.data;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
+import com.ragialquery.data.RagialData.VendingNow;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.ragialquery.data.RagialData.VendingNow;
+import java.util.ArrayList;
+import java.util.concurrent.*;
 
 /**
  * The class that handles the queries to Ragial.com and also prepares RagialData and its VendingNow list for use.
@@ -22,10 +17,10 @@ import com.ragialquery.data.RagialData.VendingNow;
  */
 public class RagialQueryMatcher {
 	private static ExecutorService executer = Executors.newCachedThreadPool();
-	private static String RAGIAL_SEARCH_URL = "http://ragial.com/search/iRO-Renewal/";
-	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragial.com/search/iRO-Renewal/";
-	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragial.com/search/iRO-Classic/";
-	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragial.com/search/iRO-Thor/";
+	private static String RAGIAL_SEARCH_URL = "http://ragi.al/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragi.al/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragi.al/search/iRO-Classic/";
+	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragi.al/search/iRO-Thor/";
 
 	public static final int RAGIAL_URL_RENEWAL = 1;
 	public static final int RAGIAL_URL_CLASSIC = 2;
@@ -125,9 +120,10 @@ public class RagialQueryMatcher {
 					urlBuilder.append(exactName.charAt(pos));
 					urlBuilder.append("%5D");
 				}
-				
+
 				Document doc = Jsoup.connect(RAGIAL_SEARCH_URL + urlBuilder.toString())
 						.timeout(0)
+						.userAgent("Mozilla")
 						.get();
 				ArrayList<RagialData> list = new ArrayList<RagialData>();
 				Elements hrefs = doc.select("tr");
@@ -135,7 +131,7 @@ public class RagialQueryMatcher {
 
 				for(Element e : hrefs) {
 					String url = e.select("td").first().select("a[href]").first().attr("href");
-					doc = Jsoup.connect(url).timeout(0).get();
+					doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
 
 					RagialData store = new RagialData();
 					store.parseDocument(doc);
