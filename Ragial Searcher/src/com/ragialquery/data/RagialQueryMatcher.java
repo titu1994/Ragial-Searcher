@@ -7,6 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.*;
 
 /**
@@ -83,8 +84,8 @@ public class RagialQueryMatcher {
 	 * @param name - Name of the item to be searched
 	 * @return RagialData[] of items with name similar to parameter name or null if Executor is null
 	 */
-	public Future<RagialData[]> searchRagial(final String name) {
-		Callable<RagialData[]> callable = getSearchRagialCallable(name);
+	public Future<RagialData[]> searchRagial(final String name, boolean specific) {
+		Callable<RagialData[]> callable = getSearchRagialCallable(name, specific);
 		if(isExecutorAvailable())
 			return executer.submit(callable);
 		else {
@@ -98,7 +99,7 @@ public class RagialQueryMatcher {
 	 * @param name
 	 * @return Callable<RagialData[]>
 	 */
-	private Callable<RagialData[]> getSearchRagialCallable(final String name) {
+	private Callable<RagialData[]> getSearchRagialCallable(final String name, final boolean specific) {
 		Callable<RagialData[]> callable = new Callable<RagialData[]>() {
 
 			@Override
@@ -121,22 +122,54 @@ public class RagialQueryMatcher {
 					urlBuilder.append("%5D");
 				}
 
+				//long t1 = System.currentTimeMillis();
+
 				Document doc = Jsoup.connect(RAGIAL_SEARCH_URL + urlBuilder.toString())
 						.timeout(0)
 						.userAgent("Mozilla")
 						.get();
+
+				//long t2 = System.currentTimeMillis();
+				//System.out.println("Time to download " + RAGIAL_SEARCH_URL + urlBuilder.toString() + " : " + (t2 - t1));
+
 				ArrayList<RagialData> list = new ArrayList<RagialData>();
 				Elements hrefs = doc.select("tr");
 				hrefs.remove(0);
 
 				for(Element e : hrefs) {
+					//long t3 = System.currentTimeMillis();
+
 					String url = e.select("td").first().select("a[href]").first().attr("href");
 					doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
 
-					RagialData store = new RagialData();
-					store.parseDocument(doc);
+					//long t4 = System.currentTimeMillis();
 
-					list.add(store);
+					//System.out.println("Time to download sub task " + url + " : " + (t4 - t3));
+
+					RagialData store = new RagialData();
+					String storeName = store.parseName(doc);
+
+					if(specific) {
+						if(storeName.equalsIgnoreCase(name)) {
+							store.parseDocument(doc);
+							list.add(store);
+							break;
+						}
+					}
+					else {
+						store.parseDocument(doc);
+						list.add(store);
+					}
+
+					if(specific) {
+						if(store.name.equalsIgnoreCase(name)) {
+							list.add(store);
+							break;
+						}
+					}
+					else {
+						list.add(store);
+					}
 				}
 				
 				return list.toArray(new RagialData[list.size()]);
@@ -155,7 +188,7 @@ public class RagialQueryMatcher {
 	public RagialData searchRagialSpecificly(String exactName) {
 		RagialData[] datas = null;
 		try {
-			datas = searchRagial(exactName).get();
+			datas = searchRagial(exactName, true).get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -249,7 +282,7 @@ public class RagialQueryMatcher {
 	 * @param datas - RagialData[] obtained from a prior call.
 	 * @return A Future of an ArrayList of VendingNow items - List of items that are on sale in the short term..
 	 */
-	public Future<ArrayList<VendingNow>> getOnSaleItems(String name, final RagialData datas[]) {
+	public Future<Vector<VendingNow>> getOnSaleItems(String name, final RagialData datas[]) {
 		return getOnSaleItems(name, datas, false);
 	}
 
@@ -260,7 +293,7 @@ public class RagialQueryMatcher {
 	 * @param data - RagialData obtained from a prior call.
 	 * @return A Future of an ArrayList of VendingNow items : List of items that are on sale in the short term..
 	 */
-	public Future<ArrayList<VendingNow>> getOnSaleItems(String name, final RagialData data) {
+	public Future<Vector<VendingNow>> getOnSaleItems(String name, final RagialData data) {
 		return getOnSaleItems(name, new RagialData[] { data });
 	}
 
@@ -273,8 +306,8 @@ public class RagialQueryMatcher {
 	 * @param checkOverLongTermAsWell - A boolean to request checking over long term prices as well.
 	 * @return A Future of an ArrayList of VendingNow items - List of items that are on sale in the long term.
 	 */
-	public Future<ArrayList<VendingNow>> getOnSaleItems(final String name, final RagialData datas[], final boolean checkOverLongTermAsWell) {
-		Callable<ArrayList<VendingNow>> callable = getOnSaleItemsCallable(name, datas, checkOverLongTermAsWell);
+	public Future<Vector<VendingNow>> getOnSaleItems(final String name, final RagialData datas[], final boolean checkOverLongTermAsWell) {
+		Callable<Vector<VendingNow>> callable = getOnSaleItemsCallable(name, datas, checkOverLongTermAsWell);
 
 		if(isExecutorAvailable()) {
 			return executer.submit(callable);
@@ -293,8 +326,8 @@ public class RagialQueryMatcher {
 	 * @param checkOverLongTermAsWell - A boolean to request checking over long term prices as well.
 	 * @return A Future of an ArrayList of VendingNow items - List of items that are on sale in the long term.
 	 */
-	public Future<ArrayList<VendingNow>> getOnSaleItems(final String name, final RagialData datas, final boolean checkOverLongTermAsWell) {
-		Callable<ArrayList<VendingNow>> callable = getOnSaleItemsCallable(name, new RagialData[] { datas }, checkOverLongTermAsWell);
+	public Future<Vector<VendingNow>> getOnSaleItems(final String name, final RagialData datas, final boolean checkOverLongTermAsWell) {
+		Callable<Vector<VendingNow>> callable = getOnSaleItemsCallable(name, new RagialData[] { datas }, checkOverLongTermAsWell);
 
 		if(isExecutorAvailable()) {
 			return executer.submit(callable);
@@ -312,13 +345,13 @@ public class RagialQueryMatcher {
 	 * @param checkOverLongTermAsWell - A boolean to request checking over long term prices as well.
 	 * @return A Callable of an ArrayList of VendingNow items
 	 */
-	private Callable<ArrayList<VendingNow>> getOnSaleItemsCallable(final String name, final RagialData[] datas, final boolean checkOverLongTermAsWell) {
-		Callable<ArrayList<VendingNow>> callable = new Callable<ArrayList<VendingNow>>() {
+	private Callable<Vector<VendingNow>> getOnSaleItemsCallable(final String name, final RagialData[] datas, final boolean checkOverLongTermAsWell) {
+		Callable<Vector<VendingNow>> callable = new Callable<Vector<VendingNow>>() {
 
 			@Override
-			public ArrayList<VendingNow> call() throws Exception {
-				ArrayList<VendingNow> list = new ArrayList<VendingNow>();
-				ArrayList<VendingNow> dataList = null;
+			public Vector<VendingNow> call() throws Exception {
+				Vector<VendingNow> list = new Vector<VendingNow>();
+				Vector<VendingNow> dataList = null;
 
 				for(RagialData data : datas) {
 					if(data == null)

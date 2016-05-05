@@ -1,12 +1,12 @@
 package com.ragialquery.data;
 
+import com.ragialquery.data.RagialData.VendingNow;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
-
-import com.ragialquery.data.RagialData.VendingNow;
 
 /**
  * A class which tests the RagialQueryMatcher class.
@@ -27,19 +27,24 @@ public class Test {
 		String name = bb.readLine();
 		
 		long a = System.currentTimeMillis();
-		RagialData[] datas = matcher.searchRagial(name).get();
+		RagialData[] datas = matcher.searchRagial(name, true).get();
 		long b = System.currentTimeMillis();
 		RagialData specificData = RagialQueryMatcher.searchRagialSpecificly(name, datas);
 		long c = System.currentTimeMillis();
 		
-		//System.out.println("Time to parse ragial.com : " + ((b-a)));
-		//System.out.println("Time to search specific : " + ((c-b)));
-	
-		System.out.println(specificData + "\n");
-		
-		System.out.println("On Sale Items: \n");
-		ArrayList<VendingNow> sales = matcher.getOnSaleItems(name, specificData).get();
-		
+		System.out.println("Time to parse ragial.com : " + ((b-a)));
+		System.out.println("Time to search specific : " + ((c-b)));
+
+        long d = System.currentTimeMillis();
+        Vector<VendingNow> sales = matcher.getOnSaleItems(name, specificData).get();
+        long e = System.currentTimeMillis();
+
+        System.out.println("Time to get On Sale Items : " + (e-d));
+
+		System.out.println("\n" + specificData);
+
+        System.out.println("\nOn Sale Items: \n");
+
 		for(VendingNow vend : sales) {
 			System.out.println(vend);
 			System.out.println();

@@ -1,20 +1,13 @@
 package com.ragialquery.ui;
 
-import java.awt.Color;
+import com.ragialquery.data.RagialData;
+import com.ragialquery.data.RagialQueryMatcher;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutionException;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import com.ragialquery.data.RagialData;
-import com.ragialquery.data.RagialQueryMatcher;
-import java.awt.Frame;
-import java.awt.Cursor;
 
 /**
  * A GUI for displaying the query results.
@@ -54,7 +47,7 @@ public class UIHandler extends JFrame {
 				else {
 					RagialData datas[] = null;
 					try {
-						datas = matcher.searchRagial(textSearchVal.getText()).get();
+						datas = matcher.searchRagial(textSearchVal.getText(), isSpecific()).get();
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					} catch (ExecutionException e1) {
