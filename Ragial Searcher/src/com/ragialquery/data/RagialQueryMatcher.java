@@ -139,9 +139,10 @@ public class RagialQueryMatcher {
 				for(Element e : hrefs) {
 					//long t3 = System.currentTimeMillis();
 
-					String url = e.select("td").first().select("a[href]").first().attr("href");
-					doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
+					System.out.println("ELEMENT : " + e);
 
+					String url = e.select("td").first().select("a[href]").get(1).attr("href");
+					doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
 					//long t4 = System.currentTimeMillis();
 
 					//System.out.println("Time to download sub task " + url + " : " + (t4 - t3));
