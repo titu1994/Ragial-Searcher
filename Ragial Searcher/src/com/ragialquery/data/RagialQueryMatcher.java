@@ -137,12 +137,20 @@ public class RagialQueryMatcher {
 				hrefs.remove(0);
 
 				for(Element e : hrefs) {
+					Thread.sleep(1000);
+
 					//long t3 = System.currentTimeMillis();
 
 					System.out.println("ELEMENT : " + e);
 
 					String url = e.select("td").first().select("a[href]").get(1).attr("href");
-					doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
+					System.out.println("URL : " + url);
+
+					try {
+						doc = Jsoup.connect(url).userAgent("Mozilla").timeout(0).get();
+					} catch (Exception ex) {
+						continue;
+					}
 					//long t4 = System.currentTimeMillis();
 
 					//System.out.println("Time to download sub task " + url + " : " + (t4 - t3));
@@ -171,6 +179,7 @@ public class RagialQueryMatcher {
 					else {
 						list.add(store);
 					}
+
 				}
 				
 				return list.toArray(new RagialData[list.size()]);
