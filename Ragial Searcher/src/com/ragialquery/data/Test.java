@@ -19,7 +19,7 @@ public class Test {
 	public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
 		
 		RagialQueryMatcher matcher = RagialQueryMatcher.getMatcher();
-		matcher.setSearchURL(RagialQueryMatcher.RAGIAL_URL_ODIN);
+		// matcher.setSearchURL(RagialQueryMatcher.RAGIAL_URL_ODIN);
 		
 		System.out.println("Enter the name");
 		
