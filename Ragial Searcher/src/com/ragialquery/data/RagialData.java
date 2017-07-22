@@ -91,6 +91,9 @@ public class RagialData {
 		case RagialQueryMatcher.RAGIAL_URL_THOR: {
 			return "iRO-Thor";
 		}
+		case RagialQueryMatcher.RAGIAL_URL_ODIN: {
+			return "iRO-Odin";
+		}
 		default: {
 			return "iRO-Renewal";
 		}
