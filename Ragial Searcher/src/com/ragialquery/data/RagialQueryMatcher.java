@@ -22,10 +22,12 @@ public class RagialQueryMatcher {
 	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragi.al/search/iRO-Renewal/";
 	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragi.al/search/iRO-Classic/";
 	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragi.al/search/iRO-Thor/";
+	private static final String RAGIAL_SEARCH_ORIN_URL = "http://ragi.al/search/iRO-Odin/";
 
 	public static final int RAGIAL_URL_RENEWAL = 1;
 	public static final int RAGIAL_URL_CLASSIC = 2;
 	public static final int RAGIAL_URL_THOR = 3;
+	public static final int RAGIAL_URL_ODIN = 4;
 	private static int searchChoiceCode = 1;
 
 	private static RagialQueryMatcher matcher = new RagialQueryMatcher();
@@ -62,6 +64,10 @@ public class RagialQueryMatcher {
 		}
 		case RAGIAL_URL_THOR: {
 			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_THOR_URL;
+			break;
+		}
+		case RAGIAL_URL_ODIN: {
+			RAGIAL_SEARCH_URL = RAGIAL_SEARCH_ORIN_URL;
 			break;
 		}
 		default: {
