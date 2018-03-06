@@ -18,11 +18,11 @@ import java.util.concurrent.*;
  */
 public class RagialQueryMatcher {
 	private static ExecutorService executer = Executors.newCachedThreadPool();
-	private static String RAGIAL_SEARCH_URL = "http://ragi.al/search/iRO-Renewal/";
-	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragi.al/search/iRO-Renewal/";
-	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragi.al/search/iRO-Classic/";
-	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragi.al/search/iRO-Thor/";
-	private static final String RAGIAL_SEARCH_ORIN_URL = "http://ragi.al/search/iRO-Odin/";
+	private static String RAGIAL_SEARCH_URL = "http://ragial.org/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_RENEWAL_URL = "http://ragial.org/search/iRO-Renewal/";
+	private static final String RAGIAL_SEARCH_CLASSIC_URL = "http://ragial.org/search/iRO-Classic/";
+	private static final String RAGIAL_SEARCH_THOR_URL = "http://ragial.org/search/iRO-Thor/";
+	private static final String RAGIAL_SEARCH_ORIN_URL = "http://ragial.org/search/iRO-Odin/";
 
 	public static final int RAGIAL_URL_RENEWAL = 1;
 	public static final int RAGIAL_URL_CLASSIC = 2;

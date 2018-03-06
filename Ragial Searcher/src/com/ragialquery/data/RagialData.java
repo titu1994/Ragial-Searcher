@@ -101,7 +101,7 @@ public class RagialData {
 	}
 
 	public String parseName(Document doc) throws IOException {
-		Element nameElement = doc.select("a[href*=ragi.al/item/" + parseRagialUrlCode() + "]").first();
+		Element nameElement = doc.select("a[href*=ragial.org/item/" + parseRagialUrlCode() + "]").first();
 		this.name = nameElement.text();
 		return name;
 	}
@@ -114,7 +114,7 @@ public class RagialData {
 	public void parseDocument(Document doc) throws IOException {
 		// t1 = System.currentTimeMillis();
 
-		Element nameElement = doc.select("a[href*=ragi.al/item/" + parseRagialUrlCode() + "]").first();
+		Element nameElement = doc.select("a[href*=ragial.org/item/" + parseRagialUrlCode() + "]").first();
 		name = nameElement.text();
 
 		Element trShort = doc.select("tr").get(1);
